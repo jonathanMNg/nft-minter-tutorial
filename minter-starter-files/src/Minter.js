@@ -1,6 +1,7 @@
 import { useEffect, useState } from "react";
 import React from 'react';
-import { connectWallet, getCurrentWalletConnected  } from "./utils/interact.js";
+import { connectWallet, getCurrentWalletConnected, mintNFT  } from "./utils/interact.js";
+import axios from "axios";
 const Minter = (props) => {
 
     //State variables
@@ -14,6 +15,7 @@ const Minter = (props) => {
         const {address, status} = await getCurrentWalletConnected();
         setWallet(address)
         setStatus(status);
+
         addWalletListener();
     }, []);
 
@@ -24,7 +26,11 @@ const Minter = (props) => {
     };
 
     const onMintPressed = async () => { //TODO: implement
-
+        const { status } = await mintNFT(url, name, description);
+        setStatus(status);
+    };
+    const onTestPressed = async () => { //TODO: implement
+            const data = await axios('http://localhost:4000/api/database/getContract');
     };
 
     return(
@@ -42,29 +48,6 @@ const Minter = (props) => {
 
         <br></br>
         <h1 id="title">🧙‍♂️ Alchemy NFT Minter</h1>
-        <p>
-          Simply add your asset's link, name, and description, then press "Mint."
-        </p>
-        <form>
-          <h2>🖼 Link to asset: </h2>
-          <input
-            type="text"
-            placeholder="e.g. https://gateway.pinata.cloud/ipfs/<hash>"
-            onChange={(event) => setURL(event.target.value)}
-          />
-          <h2>🤔 Name: </h2>
-          <input
-            type="text"
-            placeholder="e.g. My first NFT!"
-            onChange={(event) => setName(event.target.value)}
-          />
-          <h2>✍️ Description: </h2>
-          <input
-            type="text"
-            placeholder="e.g. Even cooler than cryptokitties ;)"
-            onChange={(event) => setDescription(event.target.value)}
-          />
-        </form>
         <button id="mintButton" onClick={onMintPressed}>
           Mint NFT
         </button>
